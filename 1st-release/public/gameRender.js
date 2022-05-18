@@ -17,7 +17,7 @@ export default function createGameRender (game)
 
         for(const pid in game.state.players){
             const player = game.state.players[pid];
-            drawRect({...player, color:'black'})
+            drawRect({...player, color:pid===game.current?'yellow':'black'})
         }
 
         for(const fid in game.state.fruits){
@@ -26,7 +26,8 @@ export default function createGameRender (game)
         }
 
         const playerPoints = document.getElementById("points");
-        playerPoints.innerText = game.state.players[game.state.current].points;
+        const currentPlayer = game.state.players[game.current];
+        if(currentPlayer) playerPoints.innerText = currentPlayer.points;
 
         requestAnimationFrame(renderScreen);
     }
