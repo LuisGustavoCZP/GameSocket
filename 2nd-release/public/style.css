@@ -1,0 +1,30 @@
+body {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    align-items: center;
+}
+
+header {
+    display: flex;
+    flex-grow: 1;
+}
+
+h1 {
+    margin: 0;
+}
+
+#screen {
+    display: flex;
+    box-sizing: border-box;
+    border: 5px solid black;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    width: 90vmin;
+    height: 90vmin;
+}
