@@ -3,7 +3,9 @@ function createGameRender (game)
     const screen = document.getElementById("screen");
     const context = screen.getContext('2d');
     let isRunning = false;
-    const pixelSize = screen.width / game.state.size;
+    let pixelSize = screen.width / game.state?game.state.size:1;
+
+    screen.classList.add("hidden");
 
     function drawRect (rect)
     {
@@ -30,8 +32,9 @@ function createGameRender (game)
     {
         if(isRunning) return;
         isRunning = true;
+        screen.classList.remove("hidden");
+        pixelSize = screen.width / game.state.size;
         requestAnimationFrame(renderizeGame);
-        
         console.log("Start rendering");
     }
 
@@ -39,7 +42,7 @@ function createGameRender (game)
     {
         if(!isRunning) return;
         isRunning = false;
-
+        screen.classList.add("hidden");
         console.log("Stop rendering");
     }
 

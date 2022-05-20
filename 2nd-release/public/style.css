@@ -1,3 +1,10 @@
+:root {
+    --back-color: hsla(10, 10%, 90%, 1);
+    --back-color-s: hsla(10, 10%, 70%, 1);
+    --main-color: hsla(10, 50%, 90%, 1);
+    --border-main-color: black;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -8,23 +15,79 @@ body {
     height: 100vh;
     overflow: hidden;
     align-items: center;
+    background-color: var(--back-color);
 }
 
 header {
     display: flex;
-    flex-grow: 1;
+    height: 8vmin;
+    width: 100%;
+    background-color: var(--main-color);
 }
 
 h1 {
     margin: 0;
 }
 
-#screen {
+div, canvas {
     display: flex;
     box-sizing: border-box;
-    border: 5px solid black;
+}
+
+canvas {
+    border: 5px solid var(--border-main-color);
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    background-color: aliceblue;
+}
+
+#form, #screen {
     width: 90vmin;
     height: 90vmin;
+}
+
+#form, #form > div, header {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#form > div {
+    padding: 0 10px;
+    border: 1px solid var(--border-main-color);
+    background-color: var(--back-color-s);
+}
+
+#form > div > label {
+    padding-top: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+#form > div > input {
+    padding: 5px;
+    margin: 5px;
+}
+
+#form > div > button {
+    padding: 5px;
+    margin: 5px;
+    width: 100%;
+}
+
+#form > div > h2 {
+    margin: 0;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    background-color: var(--main-color);
+    border-bottom: 1px solid var(--border-main-color);
+}
+
+#form > div > :nth-child(2) {
+    margin-top: 5px;
+}
+
+.hidden {
+    display: none;
 }
