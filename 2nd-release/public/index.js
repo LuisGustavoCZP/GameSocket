@@ -14,7 +14,7 @@ async function Start ()
     if(auth)
     {
         console.log(`Autorização: ${auth}`);
-       // StartNetwork(auth);
+        Auth(auth);
     } else {
         Open();
     }
@@ -22,19 +22,44 @@ async function Start ()
 
 const forms = [
     {
-        title:"LOGIN", submitText:"ENTER", requestType:"/login", submitAction: (r) => 
+        title:"LOGIN", submitText:"ENTER", requestType:"/login", submitAction: (auth) => 
         {
-            if(r == -1) {formType = 1; Open();}
+            if(auth == -1) {formType = 1; Open();}
+            else {
+                Auth(auth);
+            }
         }
     },
     {
-        title:"REGISTER", submitText:"CONFIRM", requestType:"/register", submitAction: (r) => 
+        title:"REGISTER", submitText:"CONFIRM", requestType:"/register", submitAction: (auth) => 
         {
-            if(r == -1) {formType = 0; Open();}
+            if(auth == -1) {formType = 0; Open();}
+            else {
+                Auth(auth);
+            }
         }
     }
 ];
 let formType = 0;
+
+function Auth (token)
+{
+    Close ();
+    StartNetwork(token);
+}
+
+function Close ()
+{
+    const form = document.getElementById("form");
+    form.classList.add('hidden');
+
+    const formTitle = document.getElementById("user-title");
+    formTitle.innerText = "";
+
+    const formSubmit = document.getElementById("user-submit");
+    formSubmit.innerText = "";
+    formSubmit.onclick = undefined;
+}
 
 function Open ()
 {

@@ -1,3 +1,5 @@
+import database from "../database/database.js";
+
 function createGame ()
 {
     const state =
@@ -80,14 +82,24 @@ function createGame ()
         return s; 
     }
 
-    function addPlayer (id, x=randomPos(), y=randomPos())
+    function addPlayer (id, character)
     {
-        const newPlayer = {id, x, y};
+        const newPlayer = {id, owner:character.owner, x:character.x, y:character.y};
         state.players[id] = newPlayer;
     }
 
     function removePlayer (id)
     {
+        const oldPlayer = state.players[id];
+        const userId = oldPlayer.owner;
+        const user = database.users.get(userId);
+        if(user)
+        {
+            console.log(user);
+            user.character.x = oldPlayer.x;
+            user.character.y = oldPlayer.y;
+            database.users.save(userId);
+        }
         delete state.players[id];
     }
 
@@ -162,6 +174,18 @@ function createGame ()
         return Math.floor(Math.random() * state.size);    
     }
 
+    function newCharacter (user)
+    {
+        const character = {
+            owner:user.id,
+            x:randomPos(),
+            y:randomPos()
+        };
+
+        user.character = character;
+        return character;
+    }
+
     return {
         state,
         setState,
@@ -171,7 +195,8 @@ function createGame ()
         getPlayer,
         movePlayer,
         registerAction,
-        unregisterAction
+        unregisterAction,
+        newCharacter
     }
 }
 

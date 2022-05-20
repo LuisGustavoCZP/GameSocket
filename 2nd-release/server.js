@@ -3,7 +3,8 @@ import http from 'http';
 import cookieParser from 'cookie-parser';
 import { Server } from 'socket.io';
 import createGame from './modules/game.js';
-import database from './database/database.js';
+import auth from './modules/auth.js';
+import crypto from 'crypto';
 
 const app = express();
 const server = http.createServer(app);
@@ -16,50 +17,31 @@ app.use(express.urlencoded({ extended: true}))
 
 app.use(express.static('public'));
 
-app.post('/register', (req, res) => 
-{
-    const { username, userpass } = req.body;
-    const id = database.users.create(username, userpass);
-    res.json(id);
-});
+app.post('/register', auth.register);
 
-app.post('/login', (req, res) => 
-{
-    console.log(req.body);
-    const { username, userpass } = req.body;
-    if(username && userpass)
-    {
-        const id = database.users.check(username, userpass);
-        res.json(id);
-    }
-    else 
-    {
-        res.json(false);
-    }
-});
+app.post('/login', auth.login);
 
 const o = "coisa";
 
-app.post('/auth', (req, res) => 
-{
-    //console.log(req.cookies);
-    res.json(false);
-});
+app.post('/auth', auth.load);
 
 sockets.on('connection', (socket) =>
 {
     const playerId = socket.id;
     console.log(`> Player connected on Server with id: ${playerId}`);
 
-    socket.on('auth', (auth)=> 
+    socket.on('auth', (token)=> 
     {
-        if(!auth || auth !== o)
+        const user = auth.check(token);
+        if(!user)
         {
             socket.disconnect(true);
             return;
         }
 
-        game.addPlayer(playerId);
+        let character = user.character ? user.character : game.newCharacter(user);
+
+        game.addPlayer(playerId, character);
         socket.on('disconnect', (socket)=>
         {
             game.removePlayer(playerId);

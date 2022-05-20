@@ -65,10 +65,10 @@ function database ()
                 if(decrypt(user.userpass) !== userpass) return -2;
                 return user.id;
             },
-            save (id)
+            async save (id)
             {
                 const user = list[id];
-                fs.writeFileSync(`${path}/${user.username}.json`, JSON.stringify(user));
+                fs.writeFileSync(`${path}/${user.username}.json`, JSON.stringify(user, null, 4));
             },
             load ()
             {
