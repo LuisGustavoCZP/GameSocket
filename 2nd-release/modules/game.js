@@ -101,7 +101,7 @@ function createGame ()
         state.actions.changes[id] = { delete:true };
         startUpdateChanges();
         delete state.players[id];
-        game.unregisterAction('update', id);
+        unregisterAction('update', id);
     }
 
     function getPlayer (id)
