@@ -44,12 +44,12 @@ sockets.on('connection', (socket) =>
         {
             socket.emit('game-update', ev);
         });
+        
         game.addPlayer(playerId, character);
         
         socket.on('disconnect', (socket)=>
         {
             game.removePlayer(playerId);
-            game.unregisterAction('update', playerId)
             console.log(`> Player disconnected on Server with id: ${playerId}`);
         });
 

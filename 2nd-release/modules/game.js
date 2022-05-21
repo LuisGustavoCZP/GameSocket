@@ -89,7 +89,7 @@ function createGame ()
     {
         const newPlayer = {id, owner:character.owner, x:character.x, y:character.y};
         state.players[id] = newPlayer;
-        
+
         state.actions.changes[id] = getPlayer(id);
         startUpdateChanges();
     }
@@ -101,6 +101,7 @@ function createGame ()
         state.actions.changes[id] = { delete:true };
         startUpdateChanges();
         delete state.players[id];
+        game.unregisterAction('update', id);
     }
 
     function getPlayer (id)
