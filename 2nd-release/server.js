@@ -21,8 +21,6 @@ app.post('/register', auth.register);
 
 app.post('/login', auth.login);
 
-const o = "coisa";
-
 app.post('/auth', auth.load);
 
 sockets.on('connection', (socket) =>
@@ -44,7 +42,7 @@ sockets.on('connection', (socket) =>
         {
             socket.emit('game-update', ev);
         });
-        
+
         game.addPlayer(playerId, character);
         
         socket.on('disconnect', (socket)=>
