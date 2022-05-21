@@ -1,7 +1,7 @@
 import createGameRender from "./render.js";
 import createInputManager from './input.js';
 
-window.game = {};
+window.game = { owner:undefined };
 window.inputManager = createInputManager();
 window.gameRender = createGameRender(game);
 
@@ -34,6 +34,7 @@ const forms = [
         title:"REGISTER", submitText:"CONFIRM", requestType:"/register", submitAction: (auth) => 
         {
             if(auth == -1) {formType = 0; Open();}
+            if(auth < 0) {}
             else {
                 Auth(auth);
             }
@@ -117,6 +118,7 @@ function StartNetwork (token)
         const playerId = socket.id;
         console.log(`Player setup for Client with id: ${playerId}`, state);
         game.state = state;
+        game.owner = playerId;
         gameRender.start();
         inputManager.start();
     });
@@ -128,7 +130,21 @@ function StartNetwork (token)
         for(const pid in changes)
         {
             const p = changes[pid];
-            game.state.objects[pid] = p;
+            if(game.state.objects[pid])
+            {
+                if(p.delete)
+                {
+                    delete game.state.objects[pid];
+                }
+                else 
+                {
+                    Object.assign(game.state.objects[pid], p);
+                }
+            }
+            else 
+            {
+                game.state.objects[pid] = p;
+            }
         }
         //
     });

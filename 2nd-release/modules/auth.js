@@ -1,21 +1,23 @@
-import database from '../database/database.js';
+import users from '../database/users.js';
 
-function register (req, res)
+async function register (req, res)
 {
     const { username, userpass } = req.body;
-    const id = database.users.create(username, userpass);
-    create(id, res);
+    const id = await users.create(username, userpass);
+    if(!(id < 0)) {
+        await create(id, res);
+    } 
     res.json(id);
 }
 
-function login (req, res)
+async function login (req, res)
 {
-    console.log(req.body);
+    //console.log(req.body);
     const { username, userpass } = req.body;
     if(username && userpass)
     {
-        const id = database.users.check(username, userpass);
-        create(id, res);
+        const id = await users.check(username, userpass);
+        await create(id, res);
         res.json(id);
     }
     else 
@@ -24,11 +26,11 @@ function login (req, res)
     }
 }
 
-function load (req, res) 
+async function load (req, res) 
 {
     const {token} = req.cookies;
-    console.log(token);
-    if(check(token)) 
+    //console.log(token);
+    if(await check(token)) 
     {
         res.json(token);
     } else {
@@ -37,16 +39,16 @@ function load (req, res)
     }
 }
 
-function create (token, res)
+async function create (token, res)
 {
+    console.log(token)
     if(token == -1 || token == -2) return;
-    res.cookie("token", token, {maxAge:1000*60*60*24, path:"/"});
+    res.cookie("token", `${token}`, {maxAge:1000*60*60*24, path:"/"});
 }
 
-function check (token)
+async function check (token)
 {
-    const user = database.users.get(token);
-    if(token < 0) return undefined;
+    const user = await users.get(token);
     return user;
 }
 

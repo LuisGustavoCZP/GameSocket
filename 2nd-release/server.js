@@ -28,30 +28,29 @@ app.post('/auth', auth.load);
 sockets.on('connection', (socket) =>
 {
     const playerId = socket.id;
-    console.log(`> Player connected on Server with id: ${playerId}`);
-
-    socket.on('auth', (token)=> 
+    socket.on('auth', async (token)=> 
     {
-        const user = auth.check(token);
+        const user = await auth.check(token);
         if(!user)
         {
             socket.disconnect(true);
             return;
         }
 
+        console.log(`> Player connected on Server with id: ${playerId}`);
         let character = user.character ? user.character : game.newCharacter(user);
-
+        
+        game.registerAction('update', playerId, (ev)=>
+        {
+            socket.emit('game-update', ev);
+        });
         game.addPlayer(playerId, character);
+        
         socket.on('disconnect', (socket)=>
         {
             game.removePlayer(playerId);
+            game.unregisterAction('update', playerId)
             console.log(`> Player disconnected on Server with id: ${playerId}`);
-        });
-    
-        game.registerAction('move', (ev)=>
-        {
-            //console.log(`Sending`, ev);
-            socket.emit('game-update', ev);
         });
 
         socket.emit('setup', game.getState(playerId));

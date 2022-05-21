@@ -9,7 +9,7 @@ function createGameRender (game)
 
     function drawRect (rect)
     {
-        context.fillStyle = rect.color;
+        context.fillStyle = rect.id == game.owner ? 'blue' : rect.color;
         context.fillRect(rect.x*pixelSize, rect.y*pixelSize, pixelSize, pixelSize);
     }
 

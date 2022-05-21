@@ -4,29 +4,32 @@ function createGame ()
 {
     const state =
     {
-        size:10,
+        size:20,
         players:{},
         npcs:{},
         items:{},
         actions:
         {
             move:{},
-        }
+            changes:{},
+        },
+        
     };
 
-    const actionEvents = { move:{} };
+    const actionEvents = { update:{} };
 
-    function registerAction (type, e)
+    function registerAction (type, playerId, e)
     {
-        actionEvents[type][e.name] = e;
+        actionEvents[type][playerId] = e;
     }
 
-    function unregisterAction (type, e)
+    function unregisterAction (type, playerId)
     {
-        delete actionEvents[type][e.name];
+        delete actionEvents[type][playerId];
     }
 
     let updatingMove = false;
+    let updatingChanges = false;
 
     function getAction (type, id)
     {
@@ -86,20 +89,17 @@ function createGame ()
     {
         const newPlayer = {id, owner:character.owner, x:character.x, y:character.y};
         state.players[id] = newPlayer;
+        
+        state.actions.changes[id] = getPlayer(id);
+        startUpdateChanges();
     }
 
     function removePlayer (id)
     {
-        const oldPlayer = state.players[id];
-        const userId = oldPlayer.owner;
-        const user = database.users.get(userId);
-        if(user)
-        {
-            console.log(user);
-            user.character.x = oldPlayer.x;
-            user.character.y = oldPlayer.y;
-            database.users.save(userId);
-        }
+        //const oldPlayer = state.players[id];
+        //const userId = oldPlayer.owner;
+        state.actions.changes[id] = { delete:true };
+        startUpdateChanges();
         delete state.players[id];
     }
 
@@ -135,38 +135,60 @@ function createGame ()
         const moveActions = state.actions.move;
         //console.log("Movendo ", moveActions);
 
-        const changes = {};
+        //const changes = {};
         for(const actorId in moveActions)
         {
             const action = moveActions[actorId];
             const player = state.players[actorId];
-
+            const change = {};
             if(!player) continue;
             
             if(action.x) 
             {
-                if(action.x > 0 && player.x < state.size-1 || action.x < 0 && player.x > 0) player.x += action.x;  
+                if(action.x > 0 && player.x < state.size-1 || action.x < 0 && player.x > 0) 
+                { 
+                    player.x += action.x; 
+                    change.x = player.x;
+                }
             };
             if(action.y) 
             {
-                if(action.y > 0 && player.y < state.size-1 || action.y < 0 && player.y > 0) player.y += action.y;
+                if(action.y > 0 && player.y < state.size-1 || action.y < 0 && player.y > 0)
+                { 
+                    player.y += action.y;
+                    change.y = player.y;
+                }
             };
 
             delete moveActions[actorId];
-            changes[actorId] = getPlayer(actorId);
+            //const obj = getPlayer(actorId);
+            state.actions.changes[actorId] = change;
         }
 
-        for(const ev in actionEvents.move)
-        {
-            actionEvents.move[ev](changes);
-        }
+        startUpdateChanges();
     }
 
     function startMoving ()
     {
         if(updatingMove) return;
         updatingMove = true;
-        setTimeout(moveUpdate, 150);
+        setTimeout(moveUpdate, 100);
+    }
+
+    function updateChanges ()
+    {
+        updatingChanges = false;
+        for(const ev in actionEvents.update)
+        {
+            actionEvents.update[ev](state.actions.changes);
+        }
+    }
+
+    function startUpdateChanges ()
+    {
+        if(updatingChanges) return;
+        updatingChanges = true;
+        setTimeout(updateChanges, 50);
     }
 
     function randomPos () 
@@ -196,7 +218,8 @@ function createGame ()
         movePlayer,
         registerAction,
         unregisterAction,
-        newCharacter
+        newCharacter,
+        startUpdateChanges
     }
 }
 
