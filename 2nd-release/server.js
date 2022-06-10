@@ -1,5 +1,6 @@
 import express from 'express';
-import http from 'http';
+import https from 'https';
+import fs from 'fs';
 import cookieParser from 'cookie-parser';
 import { Server } from 'socket.io';
 import createGame from './modules/game.js';
@@ -7,7 +8,13 @@ import auth from './modules/auth.js';
 import crypto from 'crypto';
 
 const app = express();
-const server = http.createServer(app);
+
+const options = {
+    key: fs.readFileSync('./security/cert.key'),
+    cert: fs.readFileSync('./security/cert.pem')
+};
+
+const server = https.createServer(options, app);
 const sockets = new Server(server);
 const game = createGame();
 
@@ -23,39 +30,44 @@ app.post('/login', auth.login);
 
 app.post('/auth', auth.load);
 
+app.get('/characters', auth.token, game.getCharacters);
+
+app.post('/addcharacter', auth.token, game.addCharacter);
+
+app.put('/character', auth.token, game.setCharacter);
+
 sockets.on('connection', (socket) =>
 {
     const playerId = socket.id;
     socket.on('auth', async (token)=> 
     {
-        const user = await auth.check(token);
-        if(!user)
+        const session = await auth.check(token);
+        if(!session)
         {
             socket.disconnect(true);
             return;
         }
 
-        console.log(`> Player connected on Server with id: ${playerId}`);
-        let character = user.character ? user.character : game.newCharacter(user);
+        console.log(`> Player connected on Server with id: ${session.id_user}`);
         
         game.registerAction('update', playerId, (ev)=>
         {
             socket.emit('game-update', ev);
         });
 
-        game.addPlayer(playerId, character);
+        await game.addPlayer(playerId, session);
         
-        socket.on('disconnect', (socket)=>
+        socket.on('disconnect', async (socket)=>
         {
-            game.removePlayer(playerId);
-            console.log(`> Player disconnected on Server with id: ${playerId}`);
+            await game.removePlayer(playerId);
+            console.log(`> Player disconnected on Server with id: ${session.id_user}`);
         });
 
-        socket.emit('setup', game.getState(playerId));
+        socket.emit('setup', await game.getState(playerId));
 
-        socket.on('player-move', (input)=>
+        socket.on('player-move', async (input)=>
         {
-            game.movePlayer(playerId, input);
+            await game.movePlayer(playerId, input);
         });
     });
 });

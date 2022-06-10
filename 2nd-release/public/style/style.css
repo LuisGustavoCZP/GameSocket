@@ -2,6 +2,7 @@
     --back-color: hsla(10, 10%, 90%, 1);
     --back-color-s: hsla(10, 10%, 70%, 1);
     --main-color: hsla(10, 50%, 90%, 1);
+    --main-color-s: hsla(10, 20%, 70%, 1);
     --border-main-color: black;
 }
 
@@ -58,18 +59,73 @@ canvas {
     background-color: var(--back-color-s);
 }
 
+#form > div > ul 
+{
+    list-style: none;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    margin-bottom: 5px;
+    height: 50vmin;
+    background-color: var(--back-color);
+    overflow: hidden;
+    overflow-y: scroll;
+    flex-direction: column;
+    align-items: center;
+}
+
+#form > div > ul > li 
+{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: fit-content;
+    background-color: var(--main-color);
+    padding: 3px 0;
+}
+
+#form > div > ul > li:hover, #form > div > ul > li.selected
+{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: fit-content;
+    background-color: var(--main-color-s);
+    padding: 3px 0;
+}
+
+#form > div > span {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px;
+    width: 100%;
+}
+
+#form > div > span > * {
+    display: flex;
+    padding: 5px;
+    width: 80%;
+}
+
+#form > div > span > label
+{
+    width: fit-content;
+}
+
 #form > div > label {
     padding-top: 5px;
     width: 100%;
     text-align: center;
 }
 
-#form > div > input {
+#form > div > input, #form > div > select {
     padding: 5px;
     margin: 5px;
 }
 
-#form > div > button {
+#form > div button {
     padding: 5px;
     margin: 5px;
     width: 100%;

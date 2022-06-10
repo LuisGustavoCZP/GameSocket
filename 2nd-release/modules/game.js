@@ -64,12 +64,12 @@ function createGame ()
         },
     }
 
-    function setState (newState)
+    async function setState (newState)
     {
         Object.assign(state, newState);
     }
 
-    function getState ()
+    async function getState ()
     {
         const s = {
             size:state.size,
@@ -78,33 +78,43 @@ function createGame ()
 
         for(const playerId in state.players)
         {
-            const p = getPlayer(playerId);
+            const p = await getPlayer(playerId);
             s.objects[p.id] = p;
         } 
 
-        return s; 
+        return s;
     }
 
-    function addPlayer (id, character)
+    async function addPlayer (id, session)
     {
-        const newPlayer = {id, owner:character.owner, x:character.x, y:character.y};
+        //session.character ? session.character :
+        let character = await getCharacter(session.id_character);
+        const newPlayer = {id, character:character.id, owner:character.owner, x:character.x, y:character.y};
+        //console.log(newPlayer);
         state.players[id] = newPlayer;
 
-        state.actions.changes[id] = getPlayer(id);
-        startUpdateChanges();
+        state.actions.changes[id] = await getPlayer(id);
+        await startUpdateChanges();
     }
 
-    function removePlayer (id)
+    async function removePlayer (id)
     {
-        //const oldPlayer = state.players[id];
+        const oldPlayer = state.players[id];
         //const userId = oldPlayer.owner;
+        const response = await database.query('UPDATE public.character SET (x, y)=($2, $3) WHERE id=$1 RETURNING id', [oldPlayer.character, oldPlayer.x, oldPlayer.y])
+        .then(resp => resp.rows[0])
+        .catch(err => 
+        { 
+            return err; 
+        });
+
         state.actions.changes[id] = { delete:true };
-        startUpdateChanges();
+        await startUpdateChanges();
         delete state.players[id];
         unregisterAction('update', id);
     }
 
-    function getPlayer (id)
+    async function getPlayer (id)
     {
         const player = state.players[id];
         return {
@@ -115,7 +125,7 @@ function createGame ()
         };
     }
 
-    function movePlayer (id, input)
+    async function movePlayer (id, input)
     {
         //console.log(`Player ${id} pressed`, input);
         const player = state.players[id];
@@ -126,10 +136,10 @@ function createGame ()
             if(!inputAction) continue;
             inputAction(id);
         }
-        startMoving();
+        await startMoving();
     }
 
-    function moveUpdate ()
+    async function moveUpdate ()
     {
         updatingMove = false;
 
@@ -166,17 +176,17 @@ function createGame ()
             state.actions.changes[actorId] = change;
         }
 
-        startUpdateChanges();
+        await startUpdateChanges();
     }
 
-    function startMoving ()
+    async function startMoving ()
     {
         if(updatingMove) return;
         updatingMove = true;
         setTimeout(moveUpdate, 100);
     }
 
-    function updateChanges ()
+    async function updateChanges ()
     {
         updatingChanges = false;
         for(const ev in actionEvents.update)
@@ -185,7 +195,7 @@ function createGame ()
         }
     }
 
-    function startUpdateChanges ()
+    async function startUpdateChanges ()
     {
         if(updatingChanges) return;
         updatingChanges = true;
@@ -197,15 +207,87 @@ function createGame ()
         return Math.floor(Math.random() * state.size);    
     }
 
-    function newCharacter (user)
+    async function getCharacter (characterid)
+    {
+        const character = await database.query('SELECT * FROM public.character WHERE character.id=$1', [characterid])
+        .then(resp => resp.rows[0])
+        .catch(err => 
+        { 
+            return undefined; 
+        });
+
+        console.log("Character selected ", character);
+        return character;
+    }
+
+    async function getCharacters (req, res)
+    {
+        const characters = await database.query('SELECT * FROM public.character WHERE character.owner=$1', [req.session.id_user])
+        .then(resp => resp.rows)
+        .catch(err => 
+        { 
+            return []; 
+        });
+        
+        //console.log(characters);
+        res.json(characters);
+    }
+
+    async function setCharacter (req, res)
+    {
+        const { id_character:characterid } = req.body;
+        //console.log(characterid);
+        const sessionid = await database.query('UPDATE public.session SET id_character=$2 WHERE id=$1 RETURNING id', [req.session.id, characterid])
+        .then(resp => resp.rows[0])
+        .catch(err => 
+        { 
+            return err; 
+        });
+        
+        console.log("Character is ", sessionid);
+        res.json(sessionid);
+    }
+
+    async function addCharacter (req, res)
+    {
+        const { charname:charName } = req.body;
+
+        if(charName) 
+        {
+            const queryResponse = await database.query('INSERT INTO public.character (owner, name, x, y, points) VALUES ($1, $2, $3, $4, $5) RETURNING id', [req.session.id_user, charName, randomPos(), randomPos(), 0])
+            .then(resp => resp.rows[0])
+            .catch(err => 
+            { 
+                return undefined; 
+            });
+
+            if(queryResponse)
+            {
+                //console.log(queryResponse);
+                res.json({sucess:true, content:queryResponse});
+            }
+            else 
+            {
+                res.json({sucess:false, content:"Nome indisponível"});
+            }
+            
+        } 
+        else 
+        {
+            
+            res.end();
+        }
+    }
+
+    async function newCharacter (session)
     {
         const character = {
-            owner:user.id,
+            owner:session.id_user,
             x:randomPos(),
             y:randomPos()
         };
 
-        user.character = character;
+        //session.character = character;
         return character;
     }
 
@@ -217,10 +299,12 @@ function createGame ()
         removePlayer,
         getPlayer,
         movePlayer,
+        startUpdateChanges,
         registerAction,
         unregisterAction,
-        newCharacter,
-        startUpdateChanges
+        addCharacter,
+        getCharacters,
+        setCharacter
     }
 }
 
