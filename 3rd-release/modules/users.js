@@ -1,5 +1,5 @@
-import database from './database.js'
-import { encrypt, decrypt } from '../modules/crypto.js';
+import database from '../database/database.js'
+import { encrypt, decrypt } from './crypto.js';
 
 async function get(id)
 {

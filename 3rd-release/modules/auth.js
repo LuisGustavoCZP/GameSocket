@@ -1,4 +1,4 @@
-import users from '../database/users.js';
+import users from './users.js';
 import database from '../database/database.js'
 import {uuid} from './crypto.js'
 
