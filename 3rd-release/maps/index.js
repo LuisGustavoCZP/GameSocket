@@ -11,10 +11,10 @@ function loadMap (name)
     const sets = map.tilesets.map(setPath => 
     {
         //console.log(setPath);
-        const setname = setPath.source.replace(".tsj", "");
+        const setname = setPath.source.replace(".tsj", "").replace(/\*+[/]/, "");
         if(tilesets[setname]) return tilesets[setname];
         const set = JSON.parse(fs.readFileSync(`maps/tilesets/${setname}.tsj`));
-        set.image = "data:image/png;base64," + fs.readFileSync(`maps/images/${set.image}`, {encoding: 'base64'});
+        set.image = "data:image/png;base64," + fs.readFileSync(`maps/images/${set.image.replace(/\*+[/]/, "")}`, {encoding: 'base64'});
         tilesets[setname] = set;
         return set;
     });

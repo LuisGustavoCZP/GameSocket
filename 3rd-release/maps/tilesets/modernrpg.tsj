@@ -5,7 +5,7 @@
      "orientation":"orthogonal",
      "width":32
     },
- "image":"tilemap.png",
+ "image":"../images/tilemap.png",
  "imageheight":305,
  "imagewidth":458,
  "margin":0,

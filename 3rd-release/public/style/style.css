@@ -39,7 +39,14 @@ canvas {
     border: 5px solid var(--border-main-color);
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    background-color: aliceblue;
+    /* background-color: aliceblue; */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+#screen {
+    position: relative;
 }
 
 #form, #screen {

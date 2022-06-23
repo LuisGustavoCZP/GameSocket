@@ -4,7 +4,7 @@ function createGame ()
 {
     const state =
     {
-        size:20,
+        size:32,
         players:{},
         npcs:{},
         items:{},

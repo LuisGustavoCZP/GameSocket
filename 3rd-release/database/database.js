@@ -44,7 +44,7 @@ async function insert (table, object)
     const id = uuid();
     object.id = id;
     data[table][id] = object;
-    fsasync.writeFile(`${root}/${table}/${id}.json`, JSON.stringify(object));
+    fsasync.writeFile(`${root}/${table}/${id}.json`, JSON.stringify(object), null, '\t');
     return object;
 }
 
@@ -56,7 +56,7 @@ async function update (table, id, info)
         obj[k] = info[k];
     }
     
-    fsasync.writeFile(`${root}/${table}/${id}.json`, JSON.stringify(obj));
+    fsasync.writeFile(`${root}/${table}/${id}.json`, JSON.stringify(obj), null, '\t');
     return obj;
 }
 
