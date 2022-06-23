@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bomberminion</title>
+    <link rel="stylesheet" href="style/style.css" />
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Game</h1>
+    </header>
+    <div id="form" class="hidden">
+        <div id="user" class="hidden">
+            <h2 id="user-title"></h2>
+            <label for="user-name">Username</label>
+            <input id="user-name" type="text" />
+            <label for="user-pass">Password</label>
+            <input id="user-pass" type="text" />
+            <button id="user-submit"></button>
+        </div>
+        <div id="selector" class="hidden">
+            <h2 id="selector-title"></h2>
+            <ul id="selector-list"></ul>
+            <button id="selector-submit"></button>
+            <button id="selector-create"></button>
+        </div>
+        <div id="character" class="hidden">
+            <h2 id="character-title"></h2>
+            <span>
+                <label for="character-name">Name</label>
+                <input id="character-name" type="text" />
+            </span>
+            <span>
+                <label for="character-type">Type</label>
+                <select id="character-type">
+                    <option value="1">Opção 1</option>
+                </select>
+            </span>
+            <button id="character-submit"></button>
+        </div>
+    </div>
+    <canvas id="screen" width="500" height="500" class="hidden"></canvas>
+    <script type="module" src="scripts/index.js"></script>
+</body>
+</html>
