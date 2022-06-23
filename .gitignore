@@ -127,4 +127,4 @@ dist
 .pnp.*
 
 # game
-database/data/session/
+*/database/data/session/
