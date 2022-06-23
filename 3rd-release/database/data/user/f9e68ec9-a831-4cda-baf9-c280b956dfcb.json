@@ -4,10 +4,5 @@
     "userpass": {
         "iv": "51ee4b0e1afb0b3a44d78ae9ce3f1ab9",
         "content": "dec639"
-    },
-    "character": {
-        "owner": "f9e68ec9-a831-4cda-baf9-c280b956dfcb",
-        "x": 2,
-        "y": 3
     }
 }
