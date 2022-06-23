@@ -52,7 +52,7 @@ async function check (username, password)
     const user = await search(username);
     if(!user) return -1;
     console.log("Found user:", user);
-    const userpass = user.userpass;
+    const userpass = user.password;
     if(decrypt(userpass) !== password) return -2;
     return user.id;
 };

@@ -1,4 +1,5 @@
 import https from 'https';
+import http from 'http';
 import fs from 'fs';
 import { Server } from 'socket.io';
 import createGame from './modules/game.js';
@@ -12,7 +13,8 @@ const options = {
 
 const game = createGame();
 
-const server = https.createServer(options, router(game));
+const server = http.createServer(router(game));
+//const server = https.createServer(options, router(game));
 const sockets = new Server(server);
 
 
@@ -70,5 +72,5 @@ const runBeforeExiting = () =>
   
 server.listen(3000, () =>
 {
-    console.log(`> Server listening on https://localhost:3000`);
+    console.log(`> Server listening on http://localhost:3000`);
 });

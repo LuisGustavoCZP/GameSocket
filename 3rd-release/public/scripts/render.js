@@ -3,18 +3,18 @@ let map = {};
 fetch ("map/teste")
 .then(resp => resp.json())
 .then(resp => {
-    console.log(resp);
 
     for(const set of resp.sets)//(set => 
     {
         const p = set.image;
-        console.log(set);
+        //console.log(set);
         const img = new Image();
         img.src = p;
         set.image = img;
     };
 
     map = resp;
+    console.log("Map:", map);
 });
 
 function createGameRender (game)
@@ -39,22 +39,30 @@ function createGameRender (game)
 
         context.clearRect(0, 0, screen.width, screen.height);
         
-        const mapimg = map.sets[0].image;
+        const set = map.sets[0];
+        const mapimg = set.image;
         
         let x, y;
         for (const layer of map.map.layers)
         {
-            for (const chunks of layer.chunks)
+            //console.log("Layer:", layer, set);
+            for (const chunk of layer.chunks)
             {
-                for (const tileid of chunks.data)
+                x = 0;
+                y = 0;
+                //console.log("Chunk:", chunks);
+                for (const tileid of chunk.data)
                 {
+                    //console.log("Tile:", tileid);
+                    
+                    const dx = tileid % set.columns, dy = (tileid - dx);
+                    //context.drawImage(mapimg, x, y, 128, 128);
+                    context.drawImage(mapimg, dx, dy, 16, 16, x*32, y*32, 32, 32);
                     x++;
-                    if(x > chunks.data.width) {
+                    if(x > chunk.width) {
                         x = 0;
                         y++;
-                    }   
-                    const dx = tileid % 32, dy = (tileid - dx);
-                    context.drawImage(mapimg, x, y, 16, 16, dx, dy, 16, 16);
+                    }
                 }
             }
         }
