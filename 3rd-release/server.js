@@ -1,53 +1,20 @@
-import express from 'express';
 import https from 'https';
 import fs from 'fs';
-import cookieParser from 'cookie-parser';
 import { Server } from 'socket.io';
 import createGame from './modules/game.js';
 import auth from './modules/auth.js';
-import crypto from 'crypto';
-
-const app = express();
+import router from './routes/index.js';
 
 const options = {
     key: fs.readFileSync('./security/cert.key'),
     cert: fs.readFileSync('./security/cert.pem')
 };
 
-const server = https.createServer(options, app);
-const sockets = new Server(server);
 const game = createGame();
 
-app.use(cookieParser());
-app.use(express.json())
-app.use(express.urlencoded({ extended: true}))
+const server = https.createServer(options, router(game));
+const sockets = new Server(server);
 
-app.use(express.static('public'));
-
-app.get('/map/:name', async (req, res) => {
-    
-    const file = req.params["name"].replaceAll("../", "");
-    const map = JSON.parse(fs.readFileSync(`maps/${file}.tmj`));
-    const sets = map.tilesets.map(setPath => 
-    {
-        const set = JSON.parse(fs.readFileSync(`maps/${setPath.source}`));
-        set.image = "data:image/png;base64," + fs.readFileSync(`maps/${set.image}`, {encoding: 'base64'});
-        return set;
-    });
-    res.json({map, sets});
-});
-
-app.post('/register', auth.register);
-
-app.post('/login', auth.login);
-
-app.post('/auth', auth.load);
-
-app.get('/characters', auth.token, game.getCharacters);
-
-app.post('/addcharacter', auth.token, game.addCharacter);
-
-app.put('/character', auth.token, game.setCharacter);
 
 sockets.on('connection', (socket) =>
 {
