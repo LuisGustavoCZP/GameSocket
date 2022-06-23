@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import auth from '../modules/auth.js';
 import mapRoute from "./map.js";
+import character from '../modules/game/character.js';
 
 function start (game) 
 {
@@ -21,11 +22,11 @@ function start (game)
 
     app.post('/auth', auth.load);
 
-    app.get('/characters', auth.token, game.getCharacters);
+    app.get('/characters', auth.token, character.getCharacters);
 
-    app.post('/addcharacter', auth.token, game.addCharacter);
+    app.post('/addcharacter', auth.token, character.addCharacter);
 
-    app.put('/character', auth.token, game.setCharacter);
+    app.put('/character', auth.token, character.setCharacter);
 
     return app;
 }

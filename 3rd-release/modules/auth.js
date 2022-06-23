@@ -12,7 +12,7 @@ async function register (req, res)
     if(!(id < 0)) 
     {
         const sessionId = await createCookie(id, res);
-        console.log(sessionId);
+        //console.log(sessionId);
         if(sessionId){
             res.json(sessionId);
             return;
@@ -29,7 +29,7 @@ async function login (req, res)
     {
         const id = await users.check(username, userpass);
         const sessionId = await createCookie(id, res);
-        console.log("login", sessionId);
+        //console.log("login", sessionId);
         if(sessionId){
             res.json(sessionId);
             return;
