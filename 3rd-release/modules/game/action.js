@@ -66,7 +66,9 @@ async function moveUpdate ()
         const change = {};
         if(!player) continue;
         
-        const nx = player.x + action.x;
+        const speed = .1;
+
+        const nx = player.x + (action.x*speed);
         if(action.x && !maps.collision({width:state.size, height:state.size}, nx*16, player.y*16)) 
         {
             if(action.x > 0 && player.x < state.size-1 || action.x < 0 && player.x > 0) 
@@ -76,7 +78,7 @@ async function moveUpdate ()
             }
         };
         
-        const ny = player.y + action.y;
+        const ny = player.y + (action.y*speed);
         if(action.y && !maps.collision({width:state.size, height:state.size}, player.x*16, ny*16)) 
         {
             if(action.y > 0 && player.y < state.size-1 || action.y < 0 && player.y > 0)
