@@ -82,7 +82,7 @@ function collision (colisor, x, y)
     for(const mbKey in  blockers)
     {
         const blocker = blockers[mbKey];
-        const pos = `(${x*16}, ${y*16})`;
+        const pos = `(${x}, ${y})`;
         //console.log(blocker, pos);
         if(blocker[pos])
         {
