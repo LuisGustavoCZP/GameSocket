@@ -54,11 +54,14 @@ function createGameRender (game)
                 for (const tileid of chunk.data)
                 {
                     //console.log("Tile:", tileid);
-                    const imgid = tileid-1;
-                    const dx = imgid % set.columns, dy = (imgid - dx)/set.columns;
-                    console.log(imgid, dx, dy);
-                    //context.drawImage(mapimg, x, y, 128, 128);
-                    mapcontext.drawImage(mapimg, (dx*17), (dy*17), 16, 16, (x + (chunk.x + 16))*16, (y + (chunk.y + 16))*16, 16, 16);
+                    if(tileid != 0) 
+                    {
+                        const imgid = tileid-1;
+                        const dx = imgid % set.columns, dy = (imgid - dx)/set.columns;
+                        //console.log(imgid, dx, dy);
+                        //context.drawImage(mapimg, x, y, 128, 128);
+                        mapcontext.drawImage(mapimg, (dx*17), (dy*17), 16, 16, (x + (chunk.x + 16))*16, (y + (chunk.y + 16))*16, 16, 16);
+                    }
                     x++;
                     if(x >= chunk.width) {
                         x = 0;
@@ -68,6 +71,17 @@ function createGameRender (game)
             }
         }
 
+        for (const blockersKey in map.blockers)
+        {
+            const blockers = map.blockers[blockersKey];
+            //console.log(blockers);
+            const {x, y} = blockers;
+            for (const block of blockers.blockers)
+            {
+                mapcontext.fillStyle = 'rgba(255,0,0,0.5)';
+                mapcontext.fillRect(x+block.x, y+block.y, block.width, block.height);
+            }
+        }
     }
 
     function renderizeGame ()

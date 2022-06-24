@@ -1,4 +1,5 @@
 import state from "./state.js";
+import maps from "../../maps/index.js";
 
 const actionEvents = { update:{} };
 
@@ -65,19 +66,22 @@ async function moveUpdate ()
         const change = {};
         if(!player) continue;
         
-        if(action.x) 
+        const nx = player.x + action.x;
+        if(action.x && !maps.collision({width:state.size, height:state.size}, nx, player.y)) 
         {
             if(action.x > 0 && player.x < state.size-1 || action.x < 0 && player.x > 0) 
-            { 
-                player.x += action.x; 
+            {
+                player.x = nx;
                 change.x = player.x;
             }
         };
-        if(action.y) 
+        
+        const ny = player.y + action.y;
+        if(action.y && !maps.collision({width:state.size, height:state.size}, player.x, ny)) 
         {
             if(action.y > 0 && player.y < state.size-1 || action.y < 0 && player.y > 0)
             { 
-                player.y += action.y;
+                player.y = ny;
                 change.y = player.y;
             }
         };

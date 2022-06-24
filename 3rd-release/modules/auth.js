@@ -3,7 +3,7 @@ import database from '../database/database.js'
 import {uuid} from './crypto.js'
 
 //Expiration of session in secounds
-const session_expiration = 5*60;
+const session_expiration = 60*60;
 
 async function register (req, res)
 {

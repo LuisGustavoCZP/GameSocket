@@ -85,6 +85,17 @@ function createInputManager ()
         window.onkeyup = keyup;
     }
 
+    window.addEventListener("contextmenu", (e) => 
+    {
+        if(e.button == 2) 
+        {
+            for(const l in map)
+            {
+                delete map[l];
+            }
+        }
+    });
+
     return {
         register,
         unregister,

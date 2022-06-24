@@ -14,7 +14,10 @@ router.get('/:name', async (req, res) =>
         const setname = setPath.source.replace(".tsj", "");
         if(maps.tilesets[setname]) return maps.tilesets[setname];
     });
-    res.json({map, sets});
+
+    const blockers = maps.blockers[mapname];
+
+    res.json({map, sets, blockers});
 });
 
 export default router;
