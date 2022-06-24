@@ -30,7 +30,8 @@ async function list (table)
 
 async function get (table, id)
 {
-    return data[table][id];
+    if(data[table]) return data[table][id];
+    else return undefined;
 }
 
 async function select (table, attribute, value)
@@ -43,26 +44,49 @@ async function insert (table, object)
 {
     const id = uuid();
     object.id = id;
+    if(!data[table])
+    {
+        data[table] = {};
+    }
     data[table][id] = object;
-    fsasync.writeFile(`${root}/${table}/${id}.json`, JSON.stringify(object), null, '\t');
+    const p = `${root}/${table}`;
+    if(!fs.existsSync(p))
+    {
+        fsasync.mkdir(p);
+    }
+    fsasync.writeFile(`${p}/${id}.json`, JSON.stringify(object), null, '\t');
     return object;
 }
 
 async function update (table, id, info)
 {
+    if(!data[table])
+    {
+        data[table] = {};
+    }
     const obj = data[table][id];
     for (const k in info)
     {
         obj[k] = info[k];
     }
-    
-    fsasync.writeFile(`${root}/${table}/${id}.json`, JSON.stringify(obj), null, '\t');
+
+    const p = `${root}/${table}`;
+    if(!fs.existsSync(p))
+    {
+        fsasync.mkdir(p);
+    }
+    fsasync.writeFile(`${p}/${id}.json`, JSON.stringify(obj), null, '\t');
     return obj;
 }
 
 async function remove (table, id)
 {
-
+    if(data[table])
+    {
+        delete data[table][id];
+    }
+    const p = `${root}/${table}`;
+    fsasync.rm(`${p}/${id}.json`);
 }
 
 start ();
