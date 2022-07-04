@@ -128,5 +128,5 @@ dist
 
 # game
 3rd-release/database/data/
-4th-release/data/
-4th-release/build/
+4th-release/server/data/
+4th-release/server/build/

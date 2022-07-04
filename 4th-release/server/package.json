@@ -5,8 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "npx tsc",
-    "start": "node build/server/index.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q build/server/index.js\""
+    "start": "node build/index.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q build/index.js\""
   },
   "repository": {
     "type": "git",
