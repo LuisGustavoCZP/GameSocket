@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 class Database 
 {
-    private root = `database/data`;
+    private root = `./data`;
     private data = new Map();
 
     constructor () 
@@ -22,7 +22,6 @@ class Database
                 table.set(obj.id, obj);
             });
         });
-        console.log(Object.keys(this.data));
     }
 
     async table (name : string) : Promise<Map<string, any>>
@@ -33,7 +32,7 @@ class Database
     async list (table: string) : Promise<any[]>
     {
         const t = await this.table(table);
-        return t?Array(t.values):[];
+        return t?Array(...t.values()):[];
     }
 
     async get (table: string, id: string) : Promise<any>
@@ -42,13 +41,22 @@ class Database
         else return undefined;
     }
 
-    async select (table: string, attribute : string, value: any) : Promise<any[]>
+    async select (table: string, attributes : any) : Promise<any[]>
     {
         const array = await this.list(table);
-        return array.filter(element => element[attribute] == value) || [];
+        //console.log(`Array ${table} \n`, array);
+        //const atts = Object.keys(attributes);
+        return array.filter(element => 
+        {
+            for (const key in attributes)
+            {
+                if(element[key] != attributes[key]) return false;
+            }
+            return true;
+        }) || [];
     }
 
-    async insert (table: string, object : any)
+    async insert (table: string, object : any) : Promise<any>
     {
         const id = v4();
         object.id = id;

@@ -17,7 +17,7 @@ const promises_1 = __importDefault(require("fs/promises"));
 const uuid_1 = require("uuid");
 class Database {
     constructor() {
-        this.root = `database/data`;
+        this.root = `./data`;
         this.data = new Map();
         const dataTables = fs_1.default.readdirSync(this.root);
         dataTables.forEach(dataTable => {
@@ -31,7 +31,6 @@ class Database {
                 table.set(obj.id, obj);
             });
         });
-        console.log(Object.keys(this.data));
     }
     table(name) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,7 +40,7 @@ class Database {
     list(table) {
         return __awaiter(this, void 0, void 0, function* () {
             const t = yield this.table(table);
-            return t ? Array(t.values) : [];
+            return t ? Array(...t.values()) : [];
         });
     }
     get(table, id) {
@@ -52,10 +51,18 @@ class Database {
                 return undefined;
         });
     }
-    select(table, attribute, value) {
+    select(table, attributes) {
         return __awaiter(this, void 0, void 0, function* () {
             const array = yield this.list(table);
-            return array.filter(element => element[attribute] == value) || [];
+            //console.log(`Array ${table} \n`, array);
+            //const atts = Object.keys(attributes);
+            return array.filter(element => {
+                for (const key in attributes) {
+                    if (element[key] != attributes[key])
+                        return false;
+                }
+                return true;
+            }) || [];
         });
     }
     insert(table, object) {

@@ -5,4 +5,14 @@ const ports = {
     https:3001
 };
 
-export { certs, ports };
+const security = {
+    saltRounds:10
+}
+
+const sessionConfig = {
+    get expiration () : number { return sessionConfig.expirationTime * sessionConfig.minute },
+    expirationTime: .5,
+    minute: 60*1000
+}
+
+export { certs, ports, security, sessionConfig };

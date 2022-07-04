@@ -127,4 +127,6 @@ dist
 .pnp.*
 
 # game
-*/database/data/session/
+3rd-release/database/data/
+4th-release/data/
+4th-release/build/
