@@ -1,9 +1,9 @@
 import { ExceptionTreatment } from "../../utils";
 import Database from "../../database";
-import { APIResponse } from "../../models";
+import { APIResponse, Session } from "../../models";
 import getSession from "./get";
 
-async function create (userId : string) : Promise<APIResponse>
+async function create (userId : string) : Promise<APIResponse<Session>>
 {
     try 
     {
@@ -17,12 +17,12 @@ async function create (userId : string) : Promise<APIResponse>
         {
             user:userId,
             createdAt: new Date().toISOString(),
-        });
+        }) as Session;
 
         return {
-            data: session.id,
+            data: session,
             messages: []
-        } as APIResponse;
+        } as APIResponse<Session>;
         
     }
     catch (e)

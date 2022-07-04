@@ -6,7 +6,8 @@ const ports = {
 };
 
 const security = {
-    saltRounds:10
+    saltRounds:10,
+    secret:"jacareperneta"
 }
 
 const sessionConfig = {

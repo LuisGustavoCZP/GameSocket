@@ -9,6 +9,10 @@ class Database
 
     constructor () 
     {
+        if(!fs.existsSync(this.root))
+        {
+            fs.mkdirSync(this.root)
+        }
         const dataTables = fs.readdirSync(this.root);
         dataTables.forEach(dataTable => {
             const table = new Map();

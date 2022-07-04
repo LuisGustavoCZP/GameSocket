@@ -20,7 +20,7 @@ async function login (user : User) : Promise<APIResponse>
             throw Error("400: User password doesn't match");
         }
 
-        const respSession = await session.create(userData.id)
+        const respSession = await session.create(userData.id);
         if(respSession.data)
         {
             return respSession;
@@ -33,7 +33,7 @@ async function login (user : User) : Promise<APIResponse>
         throw new ExceptionTreatment(
             e as Error,
             500,
-            "an error occurred while inserting user on database"
+            "an error occurred while trying to login"
         );
     }
 }

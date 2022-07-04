@@ -3,7 +3,7 @@ import { sessionConfig } from "../../config";
 import Database from "../../database";
 import { APIResponse, Session } from "../../models";
 
-async function get (userId : string) : Promise<APIResponse>
+async function get (userId : string) : Promise<APIResponse<Session>>
 {
     try 
     {
@@ -15,7 +15,7 @@ async function get (userId : string) : Promise<APIResponse>
             const creation = new Date(session.createdAt);
             const expiration = creation.getTime() + sessionConfig.expiration;
             const leftTime = Date.now() - expiration;
-            console.log(leftTime);
+            //console.log(leftTime);
             if(leftTime > 0)
             {
                 await Database.remove("sessions", session.id);
@@ -23,9 +23,9 @@ async function get (userId : string) : Promise<APIResponse>
             else
             {
                 return {
-                    data: session.id,
+                    data: session,
                     messages: []
-                } as APIResponse;
+                } as APIResponse<Session>;
             }
         }
 

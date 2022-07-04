@@ -1,5 +1,5 @@
-interface APIResponse {
-    data: any
+interface APIResponse<T=any> {
+    data: T
     messages: string[]
 }
 

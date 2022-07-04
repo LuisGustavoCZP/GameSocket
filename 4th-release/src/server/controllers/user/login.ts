@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { UserService } from "../../services";
+import { SessionCookie } from "../../models";
+import { UserService, CookieService } from "../../services";
 import { ResponseWriter } from "../../utils"
 
 async function login (req : Request, res: Response)
@@ -7,7 +8,9 @@ async function login (req : Request, res: Response)
     try 
     {
         const response = await UserService.login(req.body);
-        new ResponseWriter().success(res, 201, response);
+        const token = await CookieService.codify({res, session:response.data} as SessionCookie);
+        const untoken = await CookieService.decodify(token.data);
+        new ResponseWriter().success(res, 201, untoken);
     }
     catch (e)
     {

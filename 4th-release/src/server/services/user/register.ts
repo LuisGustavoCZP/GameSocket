@@ -2,7 +2,7 @@ import { ExceptionTreatment, bcrypt } from "../../utils";
 import Database from "../../database";
 import { User, APIResponse } from "../../models";
 
-async function register (user : User) : Promise<APIResponse>
+async function register (user : User) : Promise<APIResponse<User>>
 {
     try 
     {
@@ -20,7 +20,7 @@ async function register (user : User) : Promise<APIResponse>
         return {
             data: respNewUser,
             messages: []
-        } as APIResponse;
+        } as APIResponse<User>;
     }
     catch (e)
     {
