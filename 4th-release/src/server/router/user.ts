@@ -4,11 +4,10 @@ const router : Router = express.Router();
 
 router.post("/login", UserController.login);
 
+router.post("/logout", UserController.logout);
+
 router.post("/register", UserController.register);
 
-router.get("/", (req, res) => 
-{
-    res.send("pipo");
-});
+router.get("/", UserController.auth);
 
 export default router;

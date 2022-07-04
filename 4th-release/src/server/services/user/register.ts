@@ -9,7 +9,7 @@ async function register (user : User) : Promise<APIResponse<User>>
         const respUser = await Database.select("users", { username:user.username });
         if(respUser.length > 0) 
         {
-            throw Error("400: User already exists");
+            throw Error("409: User already exists");
         }
         console.log(respUser);
 

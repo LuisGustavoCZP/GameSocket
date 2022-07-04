@@ -7,9 +7,10 @@ async function decodify (token : string) : Promise<APIResponse<Partial<Session>>
 {
     try 
     {
-        const decoded = jwt.verify(token, security.secret);
+        const decoded = jwt.verify(token, security.secret) as any;
         if(decoded)
         {
+            delete decoded["iat"];
             return {
                 data: decoded,
                 messages: []

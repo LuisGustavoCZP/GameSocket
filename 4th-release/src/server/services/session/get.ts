@@ -2,6 +2,7 @@ import { ExceptionTreatment } from "../../utils";
 import { sessionConfig } from "../../config";
 import Database from "../../database";
 import { APIResponse, Session } from "../../models";
+import destroy from "./destroy";
 
 async function get (userId : string) : Promise<APIResponse<Session>>
 {
@@ -18,7 +19,7 @@ async function get (userId : string) : Promise<APIResponse<Session>>
             //console.log(leftTime);
             if(leftTime > 0)
             {
-                await Database.remove("sessions", session.id);
+                await destroy(session.id);
             }
             else
             {
@@ -39,7 +40,7 @@ async function get (userId : string) : Promise<APIResponse<Session>>
         throw new ExceptionTreatment(
             e as Error,
             500,
-            "an error occurred while inserting user on database"
+            "an error occurred while getting session"
         );
     }
 }

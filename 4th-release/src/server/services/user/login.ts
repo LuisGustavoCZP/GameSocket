@@ -1,9 +1,9 @@
 import { ExceptionTreatment, bcrypt } from "../../utils";
 import Database from "../../database";
-import { User, APIResponse } from "../../models";
+import { User, APIResponse, Session } from "../../models";
 import session from "../session";
 
-async function login (user : User) : Promise<APIResponse>
+async function login (user : User) : Promise<APIResponse<Session>>
 {
     try 
     {
