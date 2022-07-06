@@ -1,8 +1,8 @@
 import certs from "./certs";
 
 const ports = {
-    http:3000,
-    https:3001
+    http:8000,
+    https:8001
 };
 
 const security = {

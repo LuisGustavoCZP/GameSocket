@@ -10,14 +10,14 @@ class ResponseWriter
         if(Number(statusCode))
         {
             res.status(Number(statusCode)).json({
-                data:{},
+                data:null,
                 messages: messages.replace(/[|]$/, "").split("|")
             } as APIResponse);
         } 
         else
         {
             res.status(500).json({
-                data:{},
+                data:null,
                 messages:["unexpected error occurrence"]
             } as APIResponse);
         }

@@ -1,6 +1,5 @@
-import { Request } from "express";
 import { ExceptionTreatment } from "../../utils";
-import { User, APIResponse, Session } from "../../models";
+import { APIResponse, Session } from "../../models";
 import cookieService from "../cookies";
 
 async function auth (cookies : any) : Promise<APIResponse<Partial<Session>>>
@@ -10,7 +9,7 @@ async function auth (cookies : any) : Promise<APIResponse<Partial<Session>>>
         const token = cookies["token"];
         if(!token)
         {  
-            throw Error("498: Session doesn't exist");
+            throw Error("301: Session doesn't exist");
         }
         //console.log(token);
         const session = await cookieService.decodify(token);
@@ -22,7 +21,7 @@ async function auth (cookies : any) : Promise<APIResponse<Partial<Session>>>
             } as APIResponse<Partial<Session>>
         }
 
-        throw Error("498: Session can't be recovery");
+        throw Error("404: Session can't be recovery");
     }
     catch (e)
     {

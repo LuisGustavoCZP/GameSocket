@@ -15,7 +15,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 20vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,4 +35,52 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+h1, h2, h3 {
+  text-transform: uppercase;
+  user-select: none;
+}
+
+main {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+section.modal {
+  background-color: rgba(128, 128, 128, 0.288);
+  margin: 20px;
+}
+
+section.modal > h2 {
+  margin: 0;
+  padding: 10px;
+  background-color: rgba(128, 128, 128, 0.288);
+}
+
+form.block {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  padding: 10px;
+}
+
+form.block > span {
+  display: flex;
+  width: 100%;
+  justify-content: right;
+}
+
+form.block label {
+  padding: 5px 10px;
+}
+
+form.block input {
+  padding: 0px 10px;
+}
+
+form.block input[type="submit"] {
+  padding: 5px 10px;
+  margin-top: 10px;
 }

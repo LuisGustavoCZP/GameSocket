@@ -1,15 +1,19 @@
 import bcrypt from "bcrypt";
-import { security } from "../config";
 
-async function encrypt (info: string) : Promise<string>
+class BCrypt 
 {
-    const salt = await bcrypt.genSalt(security.saltRounds);
-    return await bcrypt.hash(info, salt);
+    saltRounds = 10;
+
+    async encrypt (info: string) : Promise<string>
+    {
+        const salt = await bcrypt.genSalt(this.saltRounds);
+        return await bcrypt.hash(info, salt);
+    }
+    
+    async check (info: string, hash: string) : Promise<boolean>
+    {
+        return await bcrypt.compare(info, hash);
+    }
 }
 
-async function check (info: string, hash: string) : Promise<boolean>
-{
-    return await bcrypt.compare(info, hash);
-}
-
-export default { encrypt, check }
+export default new BCrypt ();

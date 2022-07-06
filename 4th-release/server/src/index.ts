@@ -11,8 +11,7 @@ app.use(cookieParser());
 app.use(express.json())
 app.use(express.urlencoded({ extended: true}))
 
-app.use('/scripts', express.static('./build/client'));
-app.use(express.static('./public'));
+app.use(express.static('../client/build'));
 
 app.use(Routes);
 
