@@ -1,5 +1,9 @@
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
+import database from '../database';
+import { IMatchPlayer, IMatchUser, Session } from '../models';
 import Listener from "../server";
+import { MatchService, UserService } from '../services/';
+import { MatchSetup, matchSetups } from '../services/match/data';
 
 class Connections 
 {
@@ -15,6 +19,8 @@ class Connections
         };
         this.http = new Server(listener.httpServer);
         this.https = new Server(listener.httpsServer);
+
+        this.onconnect ();
     }
 
     public on (event:string, action : void | any)
@@ -23,46 +29,117 @@ class Connections
         this.https.on(event, action);
     }
 
-    /* public onconnect ()
+    public onconnect ()
     {
-        this.on('connection', (socket: any) =>
+        this.on('connection', async (socket: Socket) =>
         {
             const playerId = socket.id;
-            socket.on('auth', async (token : string)=> 
+            const session = await database.get("sessions", socket.handshake.auth["token"]) as Session;
+            if(!session)
             {
-                const session = await auth.check(token);
-                if(!session)
+                socket.disconnect(true);
+                return;
+            }
+
+            const responseMatch = await MatchService.search(session.user);
+            
+            //if(responseMatch.data) console.log("Ja existe", responseMatch.data);
+            socket.emit('check-playing', responseMatch.data?.id);
+            /* if(responseMatch.data)
+            {
+                socket.disconnect(true);
+                return;
+            } */
+
+            socket.on('match-search', async (type: string) => 
+            {
+                const responseMatchSetup = await MatchService.create(session.user, type);
+                if(responseMatchSetup.messages.length > 0)
                 {
                     socket.disconnect(true);
                     return;
                 }
-        
-                console.log(`> Player connected on Server with id: ${session.id_user}`);
+
+                const matchSetup = responseMatchSetup.data;
+                console.log(`> Player connected on Server with id: ${session.user} and match: ${matchSetup.id}`);
+
+                const user = await UserService.get(session.user);
+
+                const matchPlayer = {
+                    index: -1,
+                    owner: user.data.username,
+                    socket: playerId,
+                    setup: null
+                };
+                matchSetup.subscribe(matchPlayer);
+                socket.emit('match-update', matchSetup);
+
                 
-                action.registerAction('update', playerId, (ev : void | any)=>
-                {
-                    socket.emit('game-update', ev);
-                });
-        
-                await player.add(playerId, session);
-                
+
                 socket.on('disconnect', async ()=>
                 {
-                    await player.remove(playerId);
-                    console.log(`> Player disconnected on Server with id: ${session.id_user}`);
-                });
-        
-                socket.emit('setup', await getState(playerId));
-        
-                socket.on('player-move', async (input : string)=>
-                {
-                    await game.movePlayer(playerId, input);
+                    //console.log("User", session.user);
+                    /* const responseMatch = await MatchService.search(session.user);
+                    if(!responseMatch.data)
+                    {
+                        return;
+                    }
+
+                    const matchSetup = responseMatch.data as MatchSetup;
+                    const matchPlayer = await matchSetup.getPlayer(playerId); */
+                    
+                    let n = await matchSetup.unsubscribe(matchPlayer);
+
+                    //console.log("Deletados", matchSetups);
+                    console.log(`> Player disconnected on Server with id: ${session.user} at index:${n}`);
                 });
             });
-        });
-    } */
+            
+            socket.on('match-ready', async ()=>
+            {
+                console.log("User", session.user);
+                const responseMatch = await MatchService.search(session.user);
+                if(!responseMatch.data)
+                {
+                    socket.disconnect(true);
+                    return;
+                }
 
-    public onclose (action : void | any)
+                const matchSetup = responseMatch.data;
+                //console.log("Match", matchSetup);
+                
+                await matchSetup.confirm(playerId);
+                socket.emit('match-update', matchSetup);
+            });
+
+            
+            //MatchService.data.usersSocket.set(playerId, session.user);
+            
+            //let n = matchSetup.players.findIndex((v, i) => {if(v.owner == session.user) return i});
+            //matchSetup.players[n].socket = playerId;
+
+            
+            /* action.registerAction('update', playerId, (ev : void | any)=>
+            {
+                socket.emit('game-update', ev);
+            });
+    
+            await player.add(playerId, session);
+            
+            
+    
+            socket.emit('setup', await getState(playerId));
+    
+            socket.on('player-move', async (input : string)=>
+            {
+                await game.movePlayer(playerId, input);
+            }); */
+
+            
+        });
+    }
+
+    public onclose (action : any | unknown)
     {
         this.listeners.http.on('close', () =>
         {

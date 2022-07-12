@@ -16,7 +16,7 @@ async function create (userId : string) : Promise<APIResponse<Session>>
         const session = await Database.insert("sessions", 
         {
             user:userId,
-            createdAt: new Date().toISOString(),
+            //createdAt: new Date().toISOString(),
         }) as Session;
 
         return {

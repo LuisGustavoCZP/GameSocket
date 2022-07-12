@@ -6,8 +6,8 @@ async function logout (req : Request, res: Response)
 {
     try 
     {
-        const responseToken = await UserService.auth(req.cookies);
-        if(responseToken.data.id) await SessionService.destroy(responseToken.data.id);
+        const responseToken = await UserService.auth(req.cookies["token"]);
+        if(responseToken.data.sessionId) await SessionService.destroy(responseToken.data.sessionId);
         res.cookie("token", "undefined", { maxAge:1, path:"/" });
 
         new ResponseWriter().success(res, 200, responseToken);

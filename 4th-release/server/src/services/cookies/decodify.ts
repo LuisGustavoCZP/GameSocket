@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
 import { security } from "../../config";
 import { ExceptionTreatment } from "../../utils";
-import { APIResponse, Session } from "../../models";
+import { APIResponse, Session, SessionCookie } from "../../models";
 
-async function decodify (token : string) : Promise<APIResponse<Partial<Session>>>
+async function decodify (token : string) : Promise<APIResponse<SessionCookie>>
 {
     try 
     {
@@ -14,13 +14,14 @@ async function decodify (token : string) : Promise<APIResponse<Partial<Session>>
             return {
                 data: decoded,
                 messages: []
-            } as APIResponse<Partial<Session>>;
+            } as APIResponse<SessionCookie>;
             
         }
         throw Error("403: Token can't be verified");
     }
     catch (e)
     {
+        //console.log(e);
         throw new ExceptionTreatment(
             e as Error,
             500,

@@ -1,0 +1,95 @@
+@tailwind base;
+
+@layer base {
+  body {
+    @apply bg-white;
+  }
+  h1 {
+    @apply text-5xl font-extrabold;
+  }
+  h2 {
+    @apply text-2xl font-bold;
+  }
+  h3 {
+    @apply text-xl font-semibold;
+  }
+  a {
+    @apply text-blue-600 underline;
+  }
+  main {
+    @apply flex h-full w-full justify-center;
+  }
+}
+
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2;
+    user-select: none;
+  }
+  .btn-d {
+    @apply bg-gray-500 text-white font-bold py-2 px-4 rounded mt-2 cursor-default pointer-events-none;
+    user-select: none;
+  }
+  .secwin {
+    @apply container rounded overflow-hidden shadow-lg h-fit w-fit;
+  }
+  .modal {
+    @apply bg-blue-300;
+    margin: 20px;
+  }
+  .modal > h2 {
+    margin: 0;
+    padding: 10px;
+    background-color: rgba(250, 250, 250, .1);
+  }
+  .modal-content {
+    @apply flex flex-col justify-center px-2 w-full h-full pb-2;
+    background-color: rgba(220, 220, 220, .6);
+  }
+  .modal-content > span {
+    @apply flex flex-row justify-end items-center mt-2 w-full;
+  }
+  .modal-content > span > label {
+    @apply flex py-1 px-2 items-center justify-start;
+  }
+  .modal-content > span > input {
+    @apply px-2;
+  }
+  .animation-blink {
+    opacity: 0;
+    animation: blink 3s linear infinite;
+  }
+  .animation-delay-0s5 {
+    animation-delay: 0.5s;
+  }
+  .animation-delay-1s {
+    animation-delay: 1s;
+  }
+  .animation-delay-1s5 {
+    animation-delay: 1.5s;
+  }
+  .animation-delay-2s {
+    animation-delay: 2s;
+  }
+  .animation-delay-2s5 {
+    animation-delay: 2.5s;
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 0;
+    }
+    70% {
+      opacity: 0;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}

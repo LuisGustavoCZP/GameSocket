@@ -1,30 +1,41 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { useEffect, useState } from 'react';
-import { UserRoom } from './UserRoom';
+import { Room } from './User';
 import { Request } from '../services';
+import Loading from './Loading';
+import { GameHome } from './Game';
+
+let user : any;
 
 function Main ()
 {
-    const [isLogged, setLogged] = useState(null);
-    async function checkLogin ()
-    {
-        const resp = await Request.get("/user");
+	const [isLogged, setLogged] = useState(0);
+    
+	async function checkUser ()
+	{
+		const resp = await Request.get('/user');
         
-        if(resp.messages.length > 0) 
-        {
-            console.log(resp.messages);
-            setLogged(null);
-        } else {
-            setLogged(resp.data);
-        }
-    }
+		if(resp.messages.length > 0) 
+		{
+			console.log(resp.messages);
+			setLogged(1);
+		}
+		else 
+		{
+			console.log(resp);
+			user = resp.data;
+			setLogged(2);
+		}
+	}
 
-    useEffect(()=>
-    {
-        checkLogin ();
-    }, []);
+	useEffect(()=>
+	{
+		checkUser ();
+	}, []);
 
-    if(!isLogged) return <main><UserRoom></UserRoom></main>;
-    else return <main>Game</main>;
+	if(isLogged == 1) return <main className='items-center'><Room></Room></main>;
+	else if(isLogged == 2) return <main className='items-center'><GameHome user={user}></GameHome></main>;
+	else return <main className='items-center'><Loading /></main>;
 }
 
 export { Main };

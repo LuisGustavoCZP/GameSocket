@@ -1,13 +1,21 @@
 import { ExceptionTreatment, bcrypt } from "../../utils";
 import Database from "../../database";
-import { User, APIResponse, Session } from "../../models";
+import { IUser, APIResponse, Session } from "../../models";
 import session from "../session";
+import { UserDataValidator } from "../../validators";
 
-async function login (user : User) : Promise<APIResponse<Session>>
+async function login (user : IUser) : Promise<APIResponse<Session>>
 {
     try 
     {
-        const respUser = await Database.select("users", { username:user.username }) as User[];
+        const validUserData = new UserDataValidator(user);
+
+        if(validUserData.errors)
+        {
+            throw Error(`400: ${validUserData.errors}`);
+        }
+
+        const respUser = await Database.select("users", { username:user.username }) as IUser[];
         if(respUser.length == 0) 
         {
             throw Error("404: User not found");

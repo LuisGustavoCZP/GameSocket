@@ -1,24 +1,24 @@
 import { ExceptionTreatment } from "../../utils";
-import { APIResponse, Session } from "../../models";
+import { APIResponse, SessionCookie } from "../../models";
 import cookieService from "../cookies";
 
-async function auth (cookies : any) : Promise<APIResponse<Partial<Session>>>
+async function auth (token : string) : Promise<APIResponse<SessionCookie>>
 {
     try 
     {
-        const token = cookies["token"];
-        if(!token)
+        if(!token || token == '')
         {  
             throw Error("301: Session doesn't exist");
         }
-        //console.log(token);
+
+        //console.log(token)
         const session = await cookieService.decodify(token);
         if(session)
         {
             return {
                 data:session.data,
                 messages:[]
-            } as APIResponse<Partial<Session>>
+            } as APIResponse<SessionCookie>
         }
 
         throw Error("404: Session can't be recovery");

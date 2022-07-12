@@ -2,8 +2,8 @@ import { Response } from "express";
 import Session from "./session";
 
 interface SessionCookie {
-    res : Response
-    session : Session
+    sessionId:string
+    userId:string
 }
 
 export default SessionCookie;

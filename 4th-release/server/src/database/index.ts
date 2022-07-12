@@ -64,6 +64,8 @@ class Database
     {
         const id = v4();
         object.id = id;
+        object.createdAt = new Date().toISOString();
+        
         if(!this.data.has(table))
         {
             this.data.set(table, new Map());
