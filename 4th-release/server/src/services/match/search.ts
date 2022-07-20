@@ -15,7 +15,7 @@ async function search (userId : string) : Promise<APIResponse<MatchSetup>>
         if(match)
         {
             return {
-                data:match,
+                data:match as unknown,
                 messages:[]
             } as APIResponse<MatchSetup>;
         }

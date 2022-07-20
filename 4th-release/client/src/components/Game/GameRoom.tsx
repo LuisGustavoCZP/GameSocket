@@ -5,17 +5,19 @@ import Searching from '../Searching';
 import * as SocketIO from 'socket.io-client';
 import MatchRoom from './MatchRoom';
 
+let socket : SocketIO.Socket<ServerToClientEvents, ClientToServerEvents> = (null as unknown) as SocketIO.Socket<ServerToClientEvents, ClientToServerEvents>;
 function GameRoom (props: GameRoomProps)
 {
 	const [getMatchSetup, setMatchSetup] = useState((null as unknown) as IMatchSetup);
-	const socket: SocketIO.Socket<ServerToClientEvents, ClientToServerEvents> = SocketIO.io({
-		auth: {
-			token: props.user.sessionId
-		}
-	});
+	//const [socket, setSocket] = useState((null as unknown) as SocketIO.Socket<ServerToClientEvents, ClientToServerEvents>);
 
 	useEffect(()=>
 	{
+		socket = SocketIO.io({
+			auth: {
+				token: props.user.sessionId
+			}
+		});
 		socket.on('connect', ()=>
 		{
 			console.log('Player triyng to connect with server');

@@ -82,4 +82,6 @@ function gameType (mode:string, type : string) : IMatchType
     return m.get(type) as IMatchType;
 }
 
-export default {modes, gameType};
+const initWait = 5; 
+
+export default {modes, gameType, initWait};

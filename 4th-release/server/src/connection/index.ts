@@ -34,9 +34,11 @@ class Connections
         this.on('connection', async (socket: Socket) =>
         {
             const playerId = socket.id;
+            console.log("Novo ID", playerId);
             const session = await database.get("sessions", socket.handshake.auth["token"]) as Session;
             if(!session)
             {
+                console.log("Connection Disconected", playerId);
                 socket.disconnect(true);
                 return;
             }
@@ -45,6 +47,7 @@ class Connections
             
             //if(responseMatch.data) console.log("Ja existe", responseMatch.data);
             socket.emit('check-playing', responseMatch.data?.id);
+            //console.log("Check Playing");
             /* if(responseMatch.data)
             {
                 socket.disconnect(true);
@@ -53,9 +56,11 @@ class Connections
 
             socket.on('match-search', async (type: string) => 
             {
+                //console.log("Match Search");
                 const responseMatchSetup = await MatchService.create(session.user, type);
                 if(responseMatchSetup.messages.length > 0)
                 {
+                    console.log("Search Disconected", session.user);
                     socket.disconnect(true);
                     return;
                 }
@@ -68,13 +73,10 @@ class Connections
                 const matchPlayer = {
                     index: -1,
                     owner: user.data.username,
-                    socket: playerId,
+                    socket: {id:socket.id, commander:(key: string, data: any) => {socket.emit(key, data)}},
                     setup: null
                 };
                 matchSetup.subscribe(matchPlayer);
-                socket.emit('match-update', matchSetup);
-
-                
 
                 socket.on('disconnect', async ()=>
                 {
@@ -95,12 +97,13 @@ class Connections
                 });
             });
             
-            socket.on('match-ready', async ()=>
+            socket.on('match-confirm', async ()=>
             {
-                console.log("User", session.user);
+                //console.log("User", session.user);
                 const responseMatch = await MatchService.search(session.user);
                 if(!responseMatch.data)
                 {
+                    console.log("Disconected", session.user);
                     socket.disconnect(true);
                     return;
                 }
@@ -109,9 +112,24 @@ class Connections
                 //console.log("Match", matchSetup);
                 
                 await matchSetup.confirm(playerId);
-                socket.emit('match-update', matchSetup);
             });
 
+            socket.on('match-unconfirm', async ()=>
+            {
+                //console.log("User", session.user);
+                const responseMatch = await MatchService.search(session.user);
+                if(!responseMatch.data)
+                {
+                    console.log("Disconected", session.user);
+                    socket.disconnect(true);
+                    return;
+                }
+
+                const matchSetup = responseMatch.data;
+                //console.log("Match", matchSetup);
+                
+                await matchSetup.unconfirm(playerId);
+            });
             
             //MatchService.data.usersSocket.set(playerId, session.user);
             
