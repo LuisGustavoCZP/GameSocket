@@ -76,7 +76,13 @@ class Connections
                     socket: {id:socket.id, commander:(key: string, data: any) => {socket.emit(key, data)}},
                     setup: null
                 };
-                matchSetup.subscribe(matchPlayer);
+                const index = await matchSetup.subscribe(matchPlayer);
+
+                socket.on('video-send', async (videoImage)=>
+                {
+                    //console.log("Player conectado no video", playerId);
+                    matchSetup.sendPlayers('video-receive', {id:playerId, imageSrc:videoImage});
+                });
 
                 socket.on('disconnect', async ()=>
                 {

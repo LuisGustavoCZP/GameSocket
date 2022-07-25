@@ -240,7 +240,18 @@ class MatchSetup implements IMatchSetup
         {
             const t = this as any;
             const s = k.replace('_', '');
-            matchSetup[s] = t[k];
+            if(s == "players")
+            {
+                const ps : any = [];
+                t[k].forEach((p : any) => 
+                {    
+                    const np = Object.assign({}, p);
+                    if(p && p.socket) np.socket = p.socket.id;
+                    ps.push(np);
+                });
+                matchSetup[s] = ps;
+            }
+            else matchSetup[s] = t[k];
         });
         //console.log(matchSetup);
         await this.sendPlayers("match-update", matchSetup);

@@ -1,11 +1,14 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import { PeerServer } from 'peer';
 
 import Routes from "./router";
 import Server from "./server";
 import Connections from "./connection";
 
 const app = express();
+
+/* const peerServer = PeerServer({ port: 9000, path: '/myapp' }); */
 
 app.use(cookieParser());
 app.use(express.json())

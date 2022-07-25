@@ -12,16 +12,7 @@ function GameHome (props: GameRoomProps): JSX.Element
 	const [getMode, setMode] = useState(0);
 
 	async function getModes () 
-	{
-		/* const responseMatch = await Request.get('/match/search');
-		const m = responseMatch.data;
-		if(m)
-		{
-			console.log(m);
-			setMode(3);
-			return;
-		} */
-		
+	{	
 		const responseModes = await Request.get('/match/modes');
 		const p = responseModes.data;
 		setGameModes(p);
