@@ -12,7 +12,8 @@ interface IGameProps
 
 function GameScreen (props : IGameProps)
 {
-	const {socket, user, gameData} = props;
+	const {socket, user} = props;
+	let gameData = props.gameData;
 	const mapRef = React.createRef<HTMLCanvasElement>();
 	//const gameRef = React.createRef<HTMLCanvasElement>();
 
@@ -29,6 +30,8 @@ function GameScreen (props : IGameProps)
 
 		function gameCicle ()
 		{
+			mapContext.clearRect(0, 0, mapContext.canvas.width, mapContext.canvas.height);
+
 			const map = gameData.map;
 			let n = 0;
 			for (let y = 0; y < map.height; y++)
@@ -45,25 +48,34 @@ function GameScreen (props : IGameProps)
 			gameData.players.forEach((player : any) => 
 			{
 				mapContext.fillStyle = player.owner == user.username?'green':'red';
-				mapContext.fillRect(player.x*46, player.y*46, 46, 46);
+				mapContext.fillRect(player.position.x*46, player.position.y*46, 46, 46);
 			});
 
 			requestAnimationFrame(gameCicle);
 		}
 
-		socket.on('game-update' as any, (data: any)=>
-		{
-			console.log('update', data);
-			
-		});
+		socket.emit('player-started' as any);
 
-		mapCanvas.addEventListener('click', (e) => 
+		socket.on('game-ready' as any, () =>
 		{
-			const point = {x:e.offsetX/mapCanvas.clientWidth, y:e.offsetY/mapCanvas.clientHeight};
-			socket.emit('player-move' as any, point);
-			console.log('Clicou', point);
+			console.log('Preparado!');
+
+			socket.on('game-update' as any, (data: any)=>
+			{
+				console.log('update', data);
+				gameData = data;
+			});
+	
+			mapCanvas.addEventListener('click', (e) => 
+			{
+				const point = {x:e.offsetX/mapCanvas.clientWidth, y:e.offsetY/mapCanvas.clientHeight};
+				socket.emit('player-move' as any, point);
+				console.log('Clicou', point);
+			});
+			
+			requestAnimationFrame(gameCicle);
 		});
-		requestAnimationFrame(gameCicle);
+		
 	}, []);
 
 
