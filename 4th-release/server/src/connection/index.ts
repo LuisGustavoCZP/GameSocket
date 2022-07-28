@@ -4,6 +4,7 @@ import { IMatchPlayer, IMatchUser, Session } from '../models';
 import Listener from "../server";
 import { MatchService, UserService } from '../services/';
 import { MatchSetup, matchSetups } from '../services/match/data';
+import { GameMatch, gameData } from '../services/game/';
 
 class Connections 
 {
@@ -45,14 +46,7 @@ class Connections
 
             const responseMatch = await MatchService.search(session.user);
             
-            //if(responseMatch.data) console.log("Ja existe", responseMatch.data);
             socket.emit('check-playing', responseMatch.data?.id);
-            //console.log("Check Playing");
-            /* if(responseMatch.data)
-            {
-                socket.disconnect(true);
-                return;
-            } */
 
             socket.on('match-search', async (type: string) => 
             {
@@ -129,6 +123,15 @@ class Connections
                 //console.log("Match", matchSetup);
                 
                 await matchSetup.unconfirm(playerId);
+            });
+            
+            socket.on('player-started', async ()=>
+            {
+                const gameMatch = await gameData.byUser(session.user) as GameMatch;
+                socket.on('player-move', async (point)=>
+                {
+                    //gameMatch.players[]
+                });
             });
             
             //MatchService.data.usersSocket.set(playerId, session.user);

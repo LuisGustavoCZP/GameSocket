@@ -1,0 +1,27 @@
+{
+  "name": "4th-release",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev-print": "echo \"Servidor iniciado em modo DEV\"",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install:server": "cd client && npm i",
+    "install:client": "cd server && npm i",
+    "dev:server": "cd client && npm run dev",
+    "dev:client": "cd server && npm run dev",
+    "build:server": "cd client && npm run build",
+    "build:client": "cd server && npm run build",
+    "start:server": "cd client && npm run start",
+    "start:client": "cd server && npm run start",
+    "install": "start \"Server\" npm run install:server && start \"Client\" npm run install:client",
+    "dev": "start \"Server\" npm run dev:server && start \"Client\" npm run dev:client",
+    "build": "start \"Server\" npm run build:server && start \"Client\" npm run build:client",
+    "start": "start \"Server\" npm run start:server && start \"Client\" npm run start:client"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^7.3.0"
+  }
+}

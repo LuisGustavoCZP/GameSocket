@@ -33,9 +33,9 @@ function Main ()
 		checkUser ();
 	}, []);
 
-	if(isLogged == 1) return <main className='items-center'><Room></Room></main>;
-	else if(isLogged == 2) return <main className='items-center'><GameHome user={user}></GameHome></main>;
-	else return <main className='items-center'><Loading /></main>;
+	if(isLogged == 1) return <main className='items-center justify-center'><Room></Room></main>;
+	else if(isLogged == 2) return <main><GameHome user={user}></GameHome></main>;
+	else return <main className='items-center justify-center'><Loading /></main>;
 }
 
 export { Main };

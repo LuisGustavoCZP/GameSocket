@@ -2,6 +2,7 @@ import { Match, IMatchPlayer, IMatchSetup, IMatchType } from "../../models";
 import { matchConfig } from "../../config"
 import { uuid } from "../../utils";
 import user from "../user";
+import { GameMatch, gameData } from "../game";
 
 const matchSetups = new Map<string, MatchSetup>();
 const usersSocket = new Map<string, string>();
@@ -98,6 +99,19 @@ class MatchSetup implements IMatchSetup
     public get startedAt () : string 
     {
         return this.startedAt;
+    }
+
+    public get data () : any 
+    {
+        const matchSetup = {} as any;
+        Object.keys(this).forEach(k => 
+        {
+            const t = this as any;
+            const s = k.replace('_', '');
+            matchSetup[s] = t[k];
+        });
+
+        return matchSetup;
     }
 
     constructor (type : string)
@@ -206,7 +220,7 @@ class MatchSetup implements IMatchSetup
     {
         console.log("Iniciating match!");
         const match = this;
-        const timer = (callback : (key : string, data:any)=>{}) =>
+        const timer = async (callback : (key : string, data:any)=>{}) =>
         {
             if(match._confirmations < match._slotsMask)
             {
@@ -229,21 +243,20 @@ class MatchSetup implements IMatchSetup
                 setTimeout(() => timer(callback), 1000);
                 return;
             }
+            else 
+            {
+                const gameMatch = await gameData.create(this);
+                await gameMatch.start();
+                destroy(this.id);
+            }
         }
         timer((key : string, data:any) => match.sendPlayers(key, data));
     }
 
     public async update ()
     {
-        const matchSetup = {} as any;
-        Object.keys(this).forEach(k => 
-        {
-            const t = this as any;
-            const s = k.replace('_', '');
-            matchSetup[s] = t[k];
-        });
         //console.log(matchSetup);
-        await this.sendPlayers("match-update", matchSetup);
+        await this.sendPlayers("match-update", this.data);
     }
 
     public async sendPlayers (key : string, data : any = null)

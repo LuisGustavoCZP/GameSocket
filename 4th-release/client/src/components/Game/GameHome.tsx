@@ -74,11 +74,13 @@ function GameHome (props: GameRoomProps): JSX.Element
 			</button>);
 
 		return (
-			<section className='secwin modal w-72'>
-				<h2>Bora jogar, <span className='text-blue-500'>{`${props.user.username}`}</span>?</h2>
-				<div className='modal-content'>
-					{ options }
-					{ getMode==0? <button className='btn' onClick={handlerLogout}>Logout</button>:<button className='btn' onClick={()=>{setMode(0);}}>Voltar</button>}
+			<section className='flex flex-col w-full h-full justify-center items-center'>
+				<div className='secwin modal w-72'>
+					<h2>Bora jogar, <span className='text-blue-500'>{`${props.user.username}`}</span>?</h2>
+					<div className='modal-content'>
+						{ options }
+						{ getMode==0? <button className='btn' onClick={handlerLogout}>Logout</button>:<button className='btn' onClick={()=>{setMode(0);}}>Voltar</button>}
+					</div>
 				</div>
 			</section>
 		);

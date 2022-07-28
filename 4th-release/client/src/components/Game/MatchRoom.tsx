@@ -42,7 +42,7 @@ function MatchRoom (props : IMatchRoomProps)
 		});
 		socket.on('match-starting' as any, (data: IMatchSetup)=>
 		{
-			console.log('User started from', {data});
+			console.log('User waiting ', {data});
 			
 			setAlert(`Iniciando em ${data}`);
 		});
@@ -68,12 +68,12 @@ function MatchRoom (props : IMatchRoomProps)
 			{
 				if(!isConfirmed) handleMatchConfirmation(); 
 				else handleMatchUnconfirmation();
-			}}>{empty?'Vazio':isConfirmed?'Pronto!':'Espera'}</button>
+			}}>{empty?'Vazio':isConfirmed?isUser?'Cancelar':'Pronto':isUser?'Iniciar':'Espera'}</button>
 		</li>);
 		playerSlots.push(el);
 	}
 
-	return <section className='flex flex-col w-full h-full relative justify-center items-center'><div className={`absolute flex flex-col w-full h-full pointer-events-none justify-center items-center${!getAlert?' hidden':''}`}><h2>{getAlert}</h2></div><ul className='flex flex-wrap w-3/4 h-3/4 justify-between content-between'>{playerSlots}</ul></section>;
+	return <section className='flex flex-col w-full h-full justify-center items-center relative'><div className={`absolute flex flex-col w-full h-full pointer-events-none justify-center items-center${!getAlert?' hidden':''}`}><h2>{getAlert}</h2></div><ul className='flex flex-wrap w-3/4 h-3/4 justify-between content-between'>{playerSlots}</ul></section>;
 }
 
 export default MatchRoom;
