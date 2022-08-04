@@ -44,6 +44,11 @@ export class MapTile
 {
     public type : string;
 
+    public get typeData () : any
+    {
+        return (tileTypes as any)[this.type];
+    }
+
     constructor (type : string)
     {
         this.type = type;
@@ -64,6 +69,11 @@ export class GameMap
         this.data = new Array<MapTile>(width*height);
         this.types = tileTypes;
         this.randomize ();
+    }
+
+    public getTile (pos : Position)
+    {
+        return this.data[pos.x + (pos.y*this.width)];
     }
 
     public randomize ()
@@ -191,6 +201,124 @@ function normalize (pos : Position)
     };
 }
 
+function distMag (posA : Position, posB : Position)
+{
+    return Math.hypot(posA.x - posB.x, posA.y - posB.y);
+}
+
+function directPath (map : GameMap, posA: Position, posB : Position) : Position[]
+{
+    const dif = diference(posA, posB)
+    const dist = {
+        x:Math.abs(dif.x),
+        y:Math.abs(dif.y)
+    };
+
+    const path = [];
+    if(dist.x < dist.y)
+    {
+        path.push({x:posB.x, y:posA.y});
+        path.push({x:posB.x, y:posB.y});
+    }
+    else
+    {
+        path.push({x:posA.x, y:posB.y});
+        path.push({x:posB.x, y:posB.y});
+    }
+
+    return path;
+}
+
+function aPath (map : GameMap, posA: Position, posB : Position) : Position[]
+{
+    //const openNodes : Position[] = [];
+    //const closedNodes : Position[] = [];
+
+    const openNodes = new Set<Position>();
+    const closedNodes = new Set<Position>();
+    openNodes.add(posA);
+
+    function lowest ()
+    {
+        let lower : Position = (null as unknown) as Position;
+        let lowerCost = 0;
+
+        openNodes.forEach((node) => 
+        {
+            const g = distMag(node, posA);
+            const h = distMag(node, posB);
+            const f = h - g;
+            if(!lower || lowerCost > f)
+            {
+                lower = node;
+                lowerCost = f;
+            }
+        });
+
+        return lower;
+    }
+
+    function getNeighbors (node : Position) : Position[]
+    {
+        let nodes = [];
+        if(node.y > 0)
+        {
+            const p = {x:node.x, y:node.y-1};
+            const tile = map.getTile(p);
+            if(!tile.typeData.blocked) nodes.push(p);
+        }
+        if(node.y < map.height-1)
+        {
+            const p = {x:node.x, y:node.y+1};
+            const tile = map.getTile(p);
+            if(!tile.typeData.blocked) nodes.push(p);
+        }
+        if(node.x > 0)
+        {
+            const p = {x:node.x-1, y:node.y};
+            const tile = map.getTile(p);
+            if(!tile.typeData.blocked) nodes.push(p);
+        }
+        if(node.x < map.width-1)
+        {
+            const p = {x:node.x+1, y:node.y};
+            const tile = map.getTile(p);
+            if(!tile.typeData.blocked) nodes.push(p);
+        }
+        return nodes;
+    }
+
+    while(openNodes.size > 0)
+    {
+        const curr = lowest();
+        //const curr = openNodes[currIndex];
+        openNodes.delete(curr);
+        closedNodes.add(curr);
+
+        if(curr.x == posB.x && curr.y == posB.y) break;
+        const neighbors = getNeighbors(curr);
+        neighbors.forEach(node => 
+        {
+            if(!closedNodes.has(node))
+            {
+                if(!openNodes.has(node))
+                {
+                    const g = distMag(node, posA);
+                    const h = distMag(node, posB);
+                    const f = h - g;
+
+                    
+                }
+            }
+        });
+        
+        
+    }
+
+    const path : Position[]= [];
+    return path;
+}
+
 export class GameMatch
 {
     protected _id: string;
@@ -307,26 +435,10 @@ export class GameMatch
     public async orderGoTo (playerIndex : number, position : Position)
     {
         const player = this.players[playerIndex];
-        const dif = diference(player.position, position)
-        const dist = {
-            x:Math.abs(dif.x),
-            y:Math.abs(dif.y)
-        };
-
-        const path = [];
-        if(dist.x < dist.y)
-        {
-            path.push({x:position.x, y:player.position.y});
-            path.push({x:position.x, y:position.y});
-        }
-        else
-        {
-            path.push({x:player.position.x, y:position.y});
-            path.push({x:position.x, y:position.y});
-        }
+        
 
         if(!this._objectives['go']) this._objectives['go'] = {};
-        this._objectives['go'][playerIndex] = {playerIndex, order:'go', path};
+        this._objectives['go'][playerIndex] = {playerIndex, order:'go', path:directPath(this.map, player.position, position)};
         
         //this._objectives.push();
         if(!this.executingObjectives) this.executeObjectives();
