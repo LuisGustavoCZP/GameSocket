@@ -14,7 +14,7 @@
     "build:client": "cd server && npm run build",
     "start:server": "cd client && npm run start",
     "start:client": "cd server && npm run start",
-    "install": "start \"Server\" npm run install:server && start \"Client\" npm run install:client",
+    "install": "npm run install:server && npm run install:client",
     "dev": "start \"Server\" npm run dev:server && start \"Client\" npm run dev:client",
     "build": "start \"Server\" npm run build:server && start \"Client\" npm run build:client",
     "start": "start \"Server\" npm run start:server && start \"Client\" npm run start:client"
